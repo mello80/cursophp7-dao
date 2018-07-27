@@ -40,7 +40,7 @@ class Usuario {
 		if (count($result) > 0){
 
 			$row = $result[0];
-			
+
 			$this->setIdusuario($row['id_usuario']);
 			$this->setDeslogin($row['deslogin']);
 			$this->setDessenha($row['dessenha']);
@@ -48,6 +48,53 @@ class Usuario {
 		}
 
 	}
+
+	//não utilizamos o $this, então pode ser estático
+	public static function getList(){
+
+		$sql = new Sql();
+		return $sql->select("SELECT * FROM tb_usuarios ORDER BY deslogin;");
+
+	}
+
+	public static function search($login){
+
+
+		$sql = new Sql();
+		return $sql->select("SELECT * FROM tb_usuarios WHERE deslogin LIKE :SEARCH ORDER BY deslogin", array(
+
+			':SEARCH'=>"%" . $login ."%"
+		));
+
+	}
+
+
+	public function login($login, $password){
+
+		$sql = new Sql();
+
+		$result = $sql->select("SELECT * FROM tb_usuarios WHERE deslogin = :LOGIN AND dessenha = :PASSWORD", array(
+			":LOGIN"=>$login, 
+			":PASSWORD"=>$password
+	));
+
+		if (count($result) > 0){
+
+			$row = $result[0];
+
+			$this->setIdusuario($row['id_usuario']);
+			$this->setDeslogin($row['deslogin']);
+			$this->setDessenha($row['dessenha']);
+
+		} else {
+
+			throw new Exception("Login ou senha inválidos.");
+			
+		}
+	
+
+	}
+
 
 	public function __toString(){
 
